@@ -1,13 +1,13 @@
 import Teamspace from "../models/teamspace.model.js";
 import Canvas from "../models/canvas.model.js";
 import Chat from "../models/chat.model.js";
-import Task from "../models/task.model.js"
-import Notes from "../models/note.model.js"
+import Task from "../models/task.model.js";
+import Notes from "../models/note.model.js";
+import mongoose from "mongoose";
 
 const createTeamspace = async (req, res) => {
     const { teamspaceName } = req.body;
     const userId = req.user?.id; // Use req.user.id from JWT middleware
-
 
     // -----------------------------------------------------------
     // await Chat.collection.dropIndex("TeamspaceId_1");
@@ -25,8 +25,8 @@ const createTeamspace = async (req, res) => {
         const alreadyExist = await Teamspace.find({
             teamspaceName: teamspaceName,
         });
-        if(!alreadyExist){
-            return res.status(400).json({message:"teamspace already exist"})
+        if (!alreadyExist) {
+            return res.status(400).json({ message: "teamspace already exist" });
         }
         const teamspace = new Teamspace({
             teamspaceName: teamspaceName, // Match schema field name
@@ -81,37 +81,84 @@ const createTeamspace = async (req, res) => {
     }
 }; // CHECKED
 
+const getAllTeamspaces = async (req, res) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    try {
+        const teamspaces = await Teamspace.find({
+            $or: [{ OwnerId: userId }, { "members.user": userId }],
+        })
+            .populate("OwnerId", "username")
+            .populate("members.user", "username");
+
+        if (!teamspaces || teamspaces.length === 0) {
+            return res
+                .status(404)
+                .json({ message: "No teamspaces found for this user" });
+        }
+
+        return res.status(200).json({ teamspaces });
+    } catch (error) {
+        console.error("Error in getAllTeamspaces:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
+
 const getTeamspace = async (req, res) => {
     const { teamspaceId } = req.params;
     const userId = req.user?.id;
 
-    console.log(userId);
-    
+    console.log("teamspaceId:", teamspaceId, "userId:", userId);
+
+    if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
+
     if (!teamspaceId) {
-        return res.status(400).json({ message: "Teamspace not found" });
+        return res.status(400).json({ message: "Teamspace ID is required" });
     }
 
-    const currentTeamspace = await Teamspace.findById({ _id: teamspaceId })
-        .populate("OwnerId", "username")
-        .populate("members.user", "username")
-        .populate("canvas")
-        .populate("chat");
-
-
-    if (!currentTeamspace) {
-        return res.status(404).json({ message: "Teamspace does not exist" });
-    }
-    const isMember = currentTeamspace.members.some(
-        (m) => m.user._id.toString() === userId
-    );
-    if (!isMember) {
-        return res
-            .status(401)
-            .json({ message: "you're not a part of teamspace " });
+    if (!mongoose.Types.ObjectId.isValid(teamspaceId)) {
+        return res.status(400).json({ message: "Invalid teamspace ID" });
     }
 
-    return res.status(200).json({ currentTeamspace });
-}; //CHECKED
+    try {
+        const currentTeamspace = await Teamspace.findById(teamspaceId)
+            .populate("OwnerId", "username")
+            .populate("members.user", "username")
+            .populate("canvas")
+            .populate("chat");
+
+        if (!currentTeamspace) {
+            return res
+                .status(404)
+                .json({ message: "Teamspace does not exist" });
+        }
+
+        const isMember =
+            currentTeamspace.members.some(
+                (m) => m.user._id.toString() === userId
+            ) || currentTeamspace.OwnerId._id.toString() === userId;
+
+        if (!isMember) {
+            return res
+                .status(403)
+                .json({ message: "You are not a part of this teamspace" });
+        }
+
+        return res.status(200).json({ currentTeamspace });
+    } catch (error) {
+        console.error("Error in getTeamspace:", error);
+        if (error instanceof mongoose.CastError) {
+            return res.status(400).json({ message: "Invalid teamspace ID" });
+        }
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 
 const addMember = async (req, res) => {
     const { teamspaceId } = req.params;
@@ -126,7 +173,7 @@ const addMember = async (req, res) => {
 
     const member = teamspace.members.find((m) => m.user.toString() === userId);
     console.log(member);
-    
+
     if (!member || member.role !== "admin") {
         return res.status(403).json({ error: "Only admins can add members" });
     }
@@ -182,9 +229,8 @@ const deleteTeamspace = async (req, res) => {
         return res.status(401).json({ message: "User not authenticated" });
     }
 
+    console.log(teamspaceId, userId);
 
-    console.log(teamspaceId , userId);
-    
     try {
         const teamspace = await Teamspace.findById(teamspaceId);
         if (!teamspace)
@@ -195,7 +241,6 @@ const deleteTeamspace = async (req, res) => {
                 .json({ error: "Only the owner can delete the Teamspace" });
         }
 
-
         // Delete linked resources
         await Canvas.deleteOne({ _id: teamspace.canvas });
         await Chat.deleteOne({ _id: teamspace.chat });
@@ -205,11 +250,10 @@ const deleteTeamspace = async (req, res) => {
 
         res.status(200).json({ message: "Teamspace deleted" });
     } catch (err) {
-       console.log(err);
-       throw new Error (err.message)
-       
+        console.log(err);
+        throw new Error(err.message);
     }
-}; // CHECKED 
+}; // CHECKED
 
 export {
     createTeamspace,
@@ -217,4 +261,5 @@ export {
     addMember,
     removeMember,
     deleteTeamspace,
+    getAllTeamspaces,
 };
