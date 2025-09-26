@@ -255,6 +255,39 @@ const deleteTeamspace = async (req, res) => {
     }
 }; // CHECKED
 
+const joinTeamspace = async (req, res) => {
+    const { secret } = req.body; // this is just the teamspace _id
+    const userId = req.user.id;
+
+    try {
+        const teamspace = await Teamspace.findById(secret);
+        if (!teamspace) {
+            return res
+                .status(404)
+                .json({ message: "Invalid teamspace ID (secret)" });
+        }
+
+        // Already member?
+        if (teamspace.members.some((m) => m.user.toString() === userId)) {
+            return res
+                .status(400)
+                .json({ message: "You are already a member" });
+        }
+
+        // Add new member as 'member'
+        teamspace.members.push({ user: userId, role: "member" });
+        await teamspace.save();
+
+        res.status(200).json({
+            message: "Joined teamspace successfully",
+            teamspace,
+        });
+    } catch (error) {
+        console.error("Error in joinTeamspace:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
 export {
     createTeamspace,
     getTeamspace,
@@ -262,4 +295,5 @@ export {
     removeMember,
     deleteTeamspace,
     getAllTeamspaces,
+    joinTeamspace,
 };

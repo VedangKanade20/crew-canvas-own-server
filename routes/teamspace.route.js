@@ -7,6 +7,7 @@ import {
     removeMember,
     deleteTeamspace,
     getAllTeamspaces,
+    joinTeamspace,
 } from "../controllers/teamspace.controller.js";
 
 import { verifyJWT } from "../middlewares/user.middleware.js";
@@ -20,6 +21,8 @@ teamspaceRouter.get("/get-allTeamspaces", getAllTeamspaces);
 teamspaceRouter.post("/create-teamspace", createTeamspace);
 
 teamspaceRouter.get("/getTeamspace/:teamspaceId", getTeamspace);
+
+teamspaceRouter.post("/join-teamspace", joinTeamspace);
 
 teamspaceRouter.put("/:teamspaceId/add-member", addMember);
 
