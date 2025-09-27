@@ -102,6 +102,7 @@ const getAllTeamspaces = async (req, res) => {
         }
 
         return res.status(200).json({ teamspaces });
+        console.log(teamspaces);
     } catch (error) {
         console.error("Error in getAllTeamspaces:", error);
         return res.status(500).json({ message: "Server error" });
