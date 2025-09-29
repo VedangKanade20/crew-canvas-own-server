@@ -8,7 +8,7 @@ import {
     deleteTeamspace,
     getAllTeamspaces,
     joinTeamspace,
-} from "../controllers/teamspace.controller.js";
+} from "../controllers/teamSpace.controller.js";
 
 import { verifyJWT } from "../middlewares/user.middleware.js";
 
