@@ -129,8 +129,8 @@ const getTeamspace = async (req, res) => {
 
     try {
         const currentTeamspace = await Teamspace.findById(teamspaceId)
-            .populate("OwnerId", "username")
-            .populate("members.user", "username")
+            .populate("OwnerId", "name email")
+            .populate("members.user", "name email")
             .populate("canvas")
             .populate("chat");
 
