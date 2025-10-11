@@ -28,6 +28,6 @@ teamspaceRouter.put("/:teamspaceId/add-member", addMember);
 
 teamspaceRouter.put("/:teamspaceId/remove-member", removeMember);
 
-teamspaceRouter.delete("/delete-teamspace/:teamspaceId", deleteTeamspace);
+teamspaceRouter.delete("/:teamspaceId/delete-teamspace", deleteTeamspace);
 
 export default teamspaceRouter;
