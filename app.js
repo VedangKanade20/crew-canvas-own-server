@@ -7,8 +7,18 @@ import canvasRouter from "./routes/canvas.route.js";
 import chatRouter from "./routes/chat.route.js";
 import noteRouter from "./routes/note.route.js";
 import taskRouter from "./routes/task.route.js";
+import { Server } from "socket.io";
+import http from "http";
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  },
+});
 
 // Configure CORS to allow requests from your frontend's origin
 app.use(
@@ -32,5 +42,7 @@ app.use("/api/teamspace", canvasRouter);
 app.use("/api/teamspace", chatRouter);
 app.use("/api/teamspace", noteRouter);
 app.use("/api/teamspace", taskRouter);
+
+chatSocket(io);
 
 export default app;
