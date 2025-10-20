@@ -11,9 +11,7 @@ import { Server } from "socket.io";
 import http from "http";
 import agoraRoutes from "./routes/agoraRoutes.js";
 import chatSocket from "./socket/chatSocket.js";
-
-
-
+import canvasSocket from "./socket/canvasSocket.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -50,5 +48,6 @@ app.use("/api/teamspace", taskRouter);
 app.use("/api/agora", agoraRoutes);
 
 chatSocket(io);
+canvasSocket(io);
 
 export default app;
