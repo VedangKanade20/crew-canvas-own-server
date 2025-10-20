@@ -9,15 +9,20 @@ import noteRouter from "./routes/note.route.js";
 import taskRouter from "./routes/task.route.js";
 import { Server } from "socket.io";
 import http from "http";
+import agoraRoutes from "./routes/agoraRoutes.js";
+import chatSocket from "./socket/chatSocket.js";
+
+
+
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  },
+    cors: {
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    },
 });
 
 // Configure CORS to allow requests from your frontend's origin
@@ -42,6 +47,7 @@ app.use("/api/teamspace", canvasRouter);
 app.use("/api/teamspace", chatRouter);
 app.use("/api/teamspace", noteRouter);
 app.use("/api/teamspace", taskRouter);
+app.use("/api/agora", agoraRoutes);
 
 chatSocket(io);
 

@@ -1,6 +1,7 @@
 // socket/chatSocket.js
-import Chat from "../models/Chat.js";
+// import Chat from "../models/Chat.js";
 import jwt from "jsonwebtoken";
+import Chat from "../models/chat.model.js";
 
 export default function chatSocket(io) {
     // Check if user is logged in (JWT)
