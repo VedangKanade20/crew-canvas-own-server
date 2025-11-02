@@ -1,4 +1,4 @@
-import Teamspace from "../models/teamspace.model.js";
+import Teamspace from "../models/teamSpace.model.js";
 import Canvas from "../models/canvas.model.js";
 import Chat from "../models/chat.model.js";
 import Task from "../models/task.model.js";
