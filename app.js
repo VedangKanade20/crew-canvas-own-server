@@ -26,7 +26,7 @@ const io = new Server(server, {
 // Configure CORS to allow requests from your frontend's origin
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: "*",
         credentials: true,
     })
 );

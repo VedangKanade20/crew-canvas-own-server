@@ -1,5 +1,5 @@
 import Canvas from "../models/canvas.model.js";
-import Teamspace from "../models/teamspace.model.js";
+import Teamspace from "../models/teamSpace.model.js";
 
 const getCanvasByTeamspace = async (req, res) => {
     const { teamspaceId } = req.params;
@@ -27,7 +27,7 @@ const getCanvasByTeamspace = async (req, res) => {
     }
 
     res.status(200).json({ message: "canvas fetched successfully ", canvas });
-}; // checked 
+}; // checked
 
 const updateCanvasData = async (req, res) => {
     const { data } = req.body;
@@ -57,6 +57,6 @@ const updateCanvasData = async (req, res) => {
     }
     await canvas.save();
     res.status(200).json({ message: "Canvas updated successfully" });
-}; // checked 
+}; // checked
 
 export { getCanvasByTeamspace, updateCanvasData };

@@ -1,5 +1,5 @@
 import Chat from "../models/chat.model.js";
-import Teamspace from "../models/teamspace.model.js";
+import Teamspace from "../models/teamSpace.model.js";
 
 // const defaultSender = req.user._id;
 const getChatByTeamspace = async (req, res) => {
@@ -35,7 +35,7 @@ const getChatByTeamspace = async (req, res) => {
 
     // res.status(200).json({ messages: teamspace.chat });
     //also relevant
-}; // checked 
+}; // checked
 
 const addMessageToChat = async (req, res) => {
     const { content } = req.body;
@@ -74,7 +74,7 @@ const addMessageToChat = async (req, res) => {
     chat.messages.push(newMessage);
     await chat.save();
     res.status(201).json(newMessage);
-}; //checked 
+}; //checked
 
 const deleteMessage = async (req, res) => {
     const { teamspaceId, messageId } = req.params;
@@ -103,9 +103,9 @@ const deleteMessage = async (req, res) => {
     }
     chat.messages.splice(messageIndex, 1);
     await chat.save();
-    
+
     return res.status(200).json({ message: "Message deleted successfully" });
-}; // checked 
+}; // checked
 
 // delete the whole chat -- only done by owner
 // const deleteWholeChat = async (req, res) => {

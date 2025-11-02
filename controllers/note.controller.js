@@ -1,11 +1,13 @@
 import Note from "../models/note.model.js";
-import Teamspace from "../models/teamspace.model.js";
+import Teamspace from "../models/teamSpace.model.js";
 
 const createNote = async (req, res) => {
     const { title, content } = req.body;
     const { teamspaceId } = req.params;
     if (!title || !content) {
-        return res.status(400).json({ message: "Title and content are required" });
+        return res
+            .status(400)
+            .json({ message: "Title and content are required" });
     }
     if (!teamspaceId) {
         return res.status(400).json({ message: "Teamspace ID is required" });
@@ -24,32 +26,36 @@ const createNote = async (req, res) => {
     });
 
     await note.save();
-    
+
     // Add note to teamspace's notes array
     await Teamspace.findByIdAndUpdate(teamspaceId, {
-        $push: { notes: note._id }
+        $push: { notes: note._id },
     });
 
     res.status(201).json({ message: "Note created successfully", note });
-}; // checked 
+}; // checked
 
 const getNoteById = async (req, res) => {
     const { teamspaceId, noteId } = req.params;
 
     if (!teamspaceId || !noteId) {
-        return res.status(400).json({ message: "Teamspace ID and Note ID are required" });
+        return res
+            .status(400)
+            .json({ message: "Teamspace ID and Note ID are required" });
     }
 
-    const note = await Note.findOne({ 
+    const note = await Note.findOne({
         _id: noteId,
-        teamspaceId 
+        teamspaceId,
     });
 
     if (!note) {
-        return res.status(404).json({ message: "Note not found in this teamspace" });
+        return res
+            .status(404)
+            .json({ message: "Note not found in this teamspace" });
     }
     res.status(200).json({ note });
-}; // checked 
+}; // checked
 
 const listNotesByTeamspace = async (req, res) => {
     const { teamspaceId } = req.params;
@@ -58,23 +64,27 @@ const listNotesByTeamspace = async (req, res) => {
         return res.status(400).json({ message: "Teamspace ID is required" });
     }
 
-    const teamspace = await Teamspace.findById(teamspaceId).populate('notes');
+    const teamspace = await Teamspace.findById(teamspaceId).populate("notes");
     if (!teamspace) {
         return res.status(404).json({ message: "Teamspace not found" });
     }
 
     res.status(200).json({ notes: teamspace.notes });
-}; // checked 
+}; // checked
 
 const updateNote = async (req, res) => {
     const { teamspaceId, noteId } = req.params;
-    const { title , content } = req.body;
+    const { title, content } = req.body;
 
     if (!teamspaceId || !noteId) {
-        return res.status(400).json({ message: "Teamspace ID and Note ID are required" });
+        return res
+            .status(400)
+            .json({ message: "Teamspace ID and Note ID are required" });
     }
     if (!title || !content) {
-        return res.status(400).json({ message: "Title and content are required" });
+        return res
+            .status(400)
+            .json({ message: "Title and content are required" });
     }
 
     const note = await Note.findOneAndUpdate(
@@ -88,37 +98,43 @@ const updateNote = async (req, res) => {
     );
 
     if (!note) {
-        return res.status(404).json({ message: "Note not found in this teamspace" });
+        return res
+            .status(404)
+            .json({ message: "Note not found in this teamspace" });
     }
     res.status(200).json({ message: "Note updated successfully", note });
-}; // checked 
+}; // checked
 
 const deleteNote = async (req, res) => {
     const { teamspaceId, noteId } = req.params;
 
     if (!teamspaceId || !noteId) {
-        return res.status(400).json({ message: "Teamspace ID and Note ID are required" });
+        return res
+            .status(400)
+            .json({ message: "Teamspace ID and Note ID are required" });
     }
 
     const deletedNote = await Note.findOneAndDelete({
         _id: noteId,
-        teamspaceId
+        teamspaceId,
     });
 
     if (!deletedNote) {
-        return res.status(404).json({ message: "Note not found in this teamspace" });
+        return res
+            .status(404)
+            .json({ message: "Note not found in this teamspace" });
     }
 
     // Remove note reference from teamspace
     await Teamspace.findByIdAndUpdate(teamspaceId, {
-        $pull: { notes: noteId }
+        $pull: { notes: noteId },
     });
 
     res.status(200).json({
         message: "Note deleted successfully",
         deletedNote,
     });
-}; // checked 
+}; // checked
 
 export {
     createNote,

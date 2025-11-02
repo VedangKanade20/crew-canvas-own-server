@@ -1,5 +1,5 @@
 import Task from "../models/task.model.js";
-import Teamspace from "../models/teamspace.model.js";
+import Teamspace from "../models/teamSpace.model.js";
 
 const createTask = async (req, res) => {
     const { taskName, taskDescription = "", taskAssignedTo } = req.body;
@@ -53,12 +53,14 @@ const createTask = async (req, res) => {
 const getTask = async (req, res) => {
     const { teamspaceId, taskId } = req.params;
 
-    const userId = req.user.id
+    const userId = req.user.id;
 
     if (!teamspaceId || !taskId || !userId) {
         return res
             .status(404)
-            .json({ message: "Teamspace ID or Task ID or userId not provided" });
+            .json({
+                message: "Teamspace ID or Task ID or userId not provided",
+            });
     }
 
     const teamspace = await Teamspace.findById(teamspaceId);
@@ -85,15 +87,15 @@ const getTask = async (req, res) => {
     }
 
     res.status(200).json({ task });
-}; // checked 
+}; // checked
 
 const getTasksFromTeamspace = async (req, res) => {
     const { teamspaceId } = req.params;
-    const userId = req.user.id
+    const userId = req.user.id;
     if (!teamspaceId || !userId) {
         return res.status(404).json({ message: "something is missing " });
     }
-    const teamspace = await Teamspace.findById( teamspaceId );
+    const teamspace = await Teamspace.findById(teamspaceId);
     if (!teamspace) {
         return res.status(404).json({ message: "teamspace not found " });
     }
@@ -107,16 +109,18 @@ const getTasksFromTeamspace = async (req, res) => {
     }
 
     res.status(200).json({ tasks: teamspace.tasks });
-};  // checked 
+}; // checked
 
 const updateTask = async (req, res) => {
     const { teamspaceId, taskId } = req.params;
     const { taskName, taskDescription } = req.body;
-    const userId = req.user.id
+    const userId = req.user.id;
     if (!teamspaceId || !taskId || !userId) {
         return res
             .status(404)
-            .json({ message: "Teamspace ID or Task ID or User ID not provided" });
+            .json({
+                message: "Teamspace ID or Task ID or User ID not provided",
+            });
     }
 
     const teamspace = await Teamspace.findById(teamspaceId);
@@ -155,16 +159,18 @@ const updateTask = async (req, res) => {
     }
 
     res.status(200).json({ message: "Task Updated Successfully", task });
-}; // checked   
+}; // checked
 
 const deleteTask = async (req, res) => {
     const { teamspaceId, taskId } = req.params;
-    const userId = req.user.id
+    const userId = req.user.id;
 
     if (!teamspaceId || !taskId || !userId) {
         return res
             .status(404)
-            .json({ message: "Teamspace ID or Task ID or user ID not provided" });
+            .json({
+                message: "Teamspace ID or Task ID or user ID not provided",
+            });
     }
 
     const teamspace = await Teamspace.findById(teamspaceId);
@@ -194,13 +200,13 @@ const deleteTask = async (req, res) => {
     // Remove task reference from teamspace
     await Teamspace.findByIdAndUpdate(teamspaceId, {
         $pull: { tasks: taskId },
-            });
+    });
 
     res.status(200).json({
         message: "Task successfully deleted",
         deletedTask,
     });
-}; // checked 
+}; // checked
 
 const toggleTaskStatus = async (req, res) => {
     const { teamspaceId, taskId } = req.params;
@@ -219,8 +225,10 @@ const toggleTaskStatus = async (req, res) => {
     const isMember = teamspace.members.some(
         (member) => member.user.toString() === req.user.id
     );
-    if (!isMember){
-        return res.status(401).json({message:"you're not a part to this teamspace"})
+    if (!isMember) {
+        return res
+            .status(401)
+            .json({ message: "you're not a part to this teamspace" });
     }
 
     const task = await Task.findOne({ _id: taskId, teamspaceId });
@@ -241,7 +249,7 @@ const toggleTaskStatus = async (req, res) => {
         message: "Task status updated successfully",
         task: updatedTask,
     });
-}; // checked 
+}; // checked
 
 export {
     createTask,
