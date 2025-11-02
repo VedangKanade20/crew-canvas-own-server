@@ -26,7 +26,13 @@ const io = new Server(server, {
 // Configure CORS to allow requests from your frontend's origin
 app.use(
     cors({
-        origin: "*",
+        origin: [
+            "http://localhost:3000",
+            "https://crew-canvas-own-client.vercel.app/",
+            "https://crew-canvas-own-client.vercel.app",
+            "https://crew-canvas-own-client-4rpuv7bef-vedangk20-s-projects.vercel.app/",
+            "https://crew-canvas-own-client-git-master-vedangk20-s-projects.vercel.app/",
+        ],
         credentials: true,
     })
 );
