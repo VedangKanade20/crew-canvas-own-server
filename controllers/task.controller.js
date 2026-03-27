@@ -56,11 +56,9 @@ const getTask = async (req, res) => {
     const userId = req.user.id;
 
     if (!teamspaceId || !taskId || !userId) {
-        return res
-            .status(404)
-            .json({
-                message: "Teamspace ID or Task ID or userId not provided",
-            });
+        return res.status(404).json({
+            message: "Teamspace ID or Task ID or userId not provided",
+        });
     }
 
     const teamspace = await Teamspace.findById(teamspaceId);
@@ -95,7 +93,7 @@ const getTasksFromTeamspace = async (req, res) => {
     if (!teamspaceId || !userId) {
         return res.status(404).json({ message: "something is missing " });
     }
-    const teamspace = await Teamspace.findById(teamspaceId);
+    const teamspace = await Teamspace.findById(teamspaceId).populate("tasks");
     if (!teamspace) {
         return res.status(404).json({ message: "teamspace not found " });
     }
@@ -116,11 +114,9 @@ const updateTask = async (req, res) => {
     const { taskName, taskDescription } = req.body;
     const userId = req.user.id;
     if (!teamspaceId || !taskId || !userId) {
-        return res
-            .status(404)
-            .json({
-                message: "Teamspace ID or Task ID or User ID not provided",
-            });
+        return res.status(404).json({
+            message: "Teamspace ID or Task ID or User ID not provided",
+        });
     }
 
     const teamspace = await Teamspace.findById(teamspaceId);
@@ -166,11 +162,9 @@ const deleteTask = async (req, res) => {
     const userId = req.user.id;
 
     if (!teamspaceId || !taskId || !userId) {
-        return res
-            .status(404)
-            .json({
-                message: "Teamspace ID or Task ID or user ID not provided",
-            });
+        return res.status(404).json({
+            message: "Teamspace ID or Task ID or user ID not provided",
+        });
     }
 
     const teamspace = await Teamspace.findById(teamspaceId);
