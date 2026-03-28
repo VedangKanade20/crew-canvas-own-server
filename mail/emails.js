@@ -8,6 +8,8 @@ import {
 export const sendVerificationEmail = async (email, verificationToken) => {
     const recipient = [{ email }];
 
+
+    
     try {
         const response = await mailtrapClient.send({
             from: sender,
