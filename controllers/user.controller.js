@@ -37,12 +37,15 @@ export const registerUser = async (req, res) => {
 
     if (!token)
         return res.status(500).json({ message: "Internal server error" });
-    res.cookie("token", token, {
+
+    const cookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: "strict",
-    });
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    };
+
+    res.cookie("token", token, cookieOptions);
 
     // await sendVerificationEmail(user.email, verificationToken);
     await user.save();
@@ -68,12 +71,13 @@ export const loginUser = async (req, res) => {
 
         user.lastLogin = new Date();
         user.save();
-        res.cookie("token", token, {
+        const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: "strict",
-        });
+            sameSite: "none",
+        };
+        res.cookie("token", token, cookieOptions);
         res.status(200).json({
             user: {
                 ...user._doc,
