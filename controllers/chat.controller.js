@@ -6,7 +6,7 @@ const getChatByTeamspace = async (req, res) => {
     const { teamspaceId } = req.params;
 
     if (!teamspaceId) {
-        return res.statusd(404).json({ message: "Team Space doesnt exist" });
+        return res.status(404).json({ message: "Team Space doesnt exist" });
     }
 
     const teamspace = await Teamspace.findOne({ _id: teamspaceId });
@@ -26,7 +26,10 @@ const getChatByTeamspace = async (req, res) => {
             .json({ message: "User not a part of the Team Space" });
     }
 
-    const chat = await Chat.findOne({ teamspaceId });
+    const chat = await Chat.findOne({ teamspaceId }).populate(
+        "messages.sender",
+        "name"
+    );
 
     if (!chat) {
         return res.status(401).json({ message: "Chat does not exist" });
