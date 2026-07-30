@@ -72,7 +72,7 @@ const addMessageToChat = async (req, res) => {
     const newMessage = {
         sender: senderId,
         content,
-        timestamps: new Date(),
+        timestamp: new Date(),
     };
     chat.messages.push(newMessage);
     await chat.save();

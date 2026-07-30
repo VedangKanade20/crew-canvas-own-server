@@ -70,12 +70,12 @@ export const loginUser = async (req, res) => {
         const token = user.generateAuthToken();
 
         user.lastLogin = new Date();
-        user.save();
+        await user.save();
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         };
         res.cookie("token", token, cookieOptions);
         res.status(200).json({

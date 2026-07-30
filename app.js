@@ -57,3 +57,4 @@ chatSocket(io);
 canvasSocket(io);
 
 export default app;
+export { server };
